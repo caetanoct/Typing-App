@@ -37,6 +37,7 @@ public class keyBoard2 extends JFrame {
 	private JMenuBar menuBar;
 	private JMenu historico;
 	private JMenuItem verHistorico;
+	private JMenuItem limparHistorico;
 	private String historicoLido;
 	private JTextArea textArea;
 
@@ -44,8 +45,12 @@ public class keyBoard2 extends JFrame {
 		setLayout(new GridBagLayout());
 		textField = new JTextField(returnRandomFrase());
 		constraints = new GridBagConstraints();
-		openOutputFile();
-		closeOutputFile();
+		
+		File file = new File("historico.ser");
+		if (!file.exists()) {
+			openOutputFile();
+			closeOutputFile();
+		}
 		openInputFile();
 		readInputFile();
 		closeInputFile();
@@ -77,9 +82,23 @@ public class keyBoard2 extends JFrame {
 			}
 
 		});
+		
+		limparHistorico = new JMenuItem("Limpar histórico");
+		limparHistorico.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				historicoLido = "";
+				openOutputFile();
+				writeText();
+				closeOutputFile();
+			}
+		});
+
 		setJMenuBar(menuBar);
 		menuBar.add(historico);
 		historico.add(verHistorico);
+		historico.add(limparHistorico);
 
 		// TEXT AREA
 		textArea = new JTextArea("", 10, 10);
