@@ -1,3 +1,5 @@
+package keyBoard2;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,10 +21,15 @@ import java.util.Scanner;
 import javax.swing.*;
 
 public class keyBoard2 extends JFrame {
-	private static final String[] frasesDefinidas = { "frase de teste 1", // Frase 0
-			"frase de teste 2", // Frase 1
-			"frase de TESTE 3", // Frase 2
-			"FraSe dE teste4" }; // Frase 3
+	private static final String[] frasesDefinidas = { "Quem traz CD, LP, fax, engov e whisky JB?",
+			"Jane quer LP, fax, CD, giz, TV e bom whisky", "TV faz quengo explodir com whisky JB",
+			"Bancos fúteis pagavam-lhe queijo, whisky e xadrez", "Jovem ex-quenga picha frase da Blitz",
+			"Blitz prende ex-vesgo com cheque fajuto", "Jovem craque belga prediz falhas no xote",
+			"Grave e cabisbaixo, o filho justo zelava pela querida mãe doente",
+			"Zebras caolhas de Java querem passar fax para moças gigantes de New York",
+			"Gazeta publica hoje no jornal uma breve nota de faxina na quermesse",
+			"Um pequeno jabuti xereta viu dez cegonhas felizes",
+			"Fidel exporta whisky, vinho, queijo, caju, manga e nabo" };
 	private JTextField textField;
 	// setas, espaço
 	private GridBagConstraints constraints;
@@ -45,7 +52,7 @@ public class keyBoard2 extends JFrame {
 		setLayout(new GridBagLayout());
 		textField = new JTextField(returnRandomFrase());
 		constraints = new GridBagConstraints();
-		
+
 		File file = new File("historico.ser");
 		if (!file.exists()) {
 			openOutputFile();
@@ -59,7 +66,7 @@ public class keyBoard2 extends JFrame {
 		} else {
 			historicoLido += "\n";
 		}
-		
+
 		// INSTRUÇOES DE CIMA
 		constraints.fill = GridBagConstraints.HORIZONTAL;
 		topLabel = new JLabel(
@@ -84,7 +91,7 @@ public class keyBoard2 extends JFrame {
 			}
 
 		});
-		
+
 		limparHistorico = new JMenuItem("Limpar histórico");
 		limparHistorico.addActionListener(new ActionListener() {
 
@@ -92,11 +99,18 @@ public class keyBoard2 extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				historicoLido = "";
 				openOutputFile();
-				writeText();
+				try {
+					output.writeObject("");
+				} catch (IOException e1) {
+					System.err.println("Error clearing history");
+				}
 				closeOutputFile();
 			}
 		});
 
+		limparHistorico.setMnemonic(KeyEvent.VK_L);
+		verHistorico.setMnemonic(KeyEvent.VK_V);
+		historico.setMnemonic(KeyEvent.VK_H);
 		setJMenuBar(menuBar);
 		menuBar.add(historico);
 		historico.add(verHistorico);
@@ -122,21 +136,23 @@ public class keyBoard2 extends JFrame {
 
 				// Marcar no historico
 				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-					
-					System.out.println(isInputCorrect(textArea.getText()) ? "esta em predefinidas ou textfield" : "nao esta em predefinidas ou textfield");
-					
+
+					System.out.println(isInputCorrect(textArea.getText()) ? "esta em predefinidas ou textfield"
+							: "nao esta em predefinidas ou textfield");
+
 					openOutputFile();
 					writeText();
 					closeOutputFile();
 					textArea.setText(null);
-					
+					textField.setText(returnRandomFrase());
+
 				}
 
 			}
 
 			@Override
 			public void keyReleased(KeyEvent arg0) {
-				if(arg0.getKeyCode() == KeyEvent.VK_ENTER) {
+				if (arg0.getKeyCode() == KeyEvent.VK_ENTER) {
 					textArea.setText(textArea.getText().replaceAll("\n", ""));
 				}
 				// Descolorir Botoes
@@ -170,24 +186,25 @@ public class keyBoard2 extends JFrame {
 		}
 		throw new notInVirtualKeyboard("A tecla nao esta no teclado virtaul");
 	}
-	// Metodos para gerar frases e checa-las
-		private String returnRandomFrase() {
-			Random gerador = new Random();
-			return frasesDefinidas[gerador.nextInt(frasesDefinidas.length)];
-		}
 
-		private boolean isInputCorrect(String input) {
-			for (int i = 0; i < frasesDefinidas.length; i++) {
-				if (input.equalsIgnoreCase(frasesDefinidas[i])) {
-					return true;
-				}
-			}
-			if (input.equalsIgnoreCase(textField.getText())) {
+	// Metodos para gerar frases e checa-las
+	private String returnRandomFrase() {
+		Random gerador = new Random();
+		return frasesDefinidas[gerador.nextInt(frasesDefinidas.length)];
+	}
+
+	private boolean isInputCorrect(String input) {
+		for (int i = 0; i < frasesDefinidas.length; i++) {
+			if (input.equalsIgnoreCase(frasesDefinidas[i])) {
 				return true;
 			}
-			return false;
 		}
-	
+		if (input.equalsIgnoreCase(textField.getText())) {
+			return true;
+		}
+		return false;
+	}
+
 	// Métodos para pintar o botão
 	private int findLinha(int KeyCode) {
 
@@ -401,7 +418,7 @@ public class keyBoard2 extends JFrame {
 	// Write to file
 	public void writeText() {
 		try {
-			historicoLido += textArea.getText();
+			historicoLido += textArea.getText() + "\n";
 			output.writeObject(historicoLido);
 		} catch (IOException ioException) {
 			System.err.println("Error writing to file.");
