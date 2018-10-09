@@ -1,10 +1,10 @@
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.EOFException;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -56,6 +56,8 @@ public class keyBoard2 extends JFrame {
 		closeInputFile();
 		if (historicoLido == null) {
 			historicoLido = "";
+		} else {
+			historicoLido += "\n";
 		}
 		
 		// INSTRUÇOES DE CIMA
